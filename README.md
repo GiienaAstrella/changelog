@@ -29,14 +29,6 @@ My projects and DDV projects are written in various languages, using various tec
 To avoid rewriting this tool as hacky scripts for every single project (been there, done that), and to keep the dependency list minimal, whatever language I use must compile into native binaries.
 Many languages can achieve this goal, but I am most comfortable with Go.
 
-## Why NodeJS
-
-Many of my projects and many DDV projects utilize NodeJS.
-Creating a wrapper around the Go tool is a no-brainer.
-
-While I could write this tool in Typescript, that would require installing NodeJS (or some other JavsScript environment) for projects that may not need it (e.g. pure Go projects).
-The most obvious solution here is to write the tool in Go and write a JS wrapper around the tool.
-
 ## Installation
 
 There are various ways to install Changelog.
@@ -47,26 +39,6 @@ You can download the pre-compiled binaries for supported platforms from the [rel
 You can also download such binaries from the official distribution server: `https://projects.gassets.space/changelog/VERSION/changelog-PLATFORM-VERSION.tar.gz`, where `VERSION` is the version number (i.e. `0.1.0`) and `PLATFORM` is the platform identifier pair (i.e. `darwin-amd64`).
 
 Simply extract this archive.
-
-### NPM
-
-On systems with NPM installed, you can install Changelog with NPM.
-
-``` text
-npm install @ghifari160/changelog
-```
-
-**Note:** on older versions, the installation will *silently fail* if installed with
-`--ignore-scripts`.
-These older versions rely on installation hooks to install the Changelog binary.
-As of Changelog v0.3.0, it is safe to use `--ignore-scripts`.
-The binary installation happens on first execution instead.
-
-If installed locally in a project, you can run the tool through NPM
-
-``` text
-npx changelog command [options] [arguments...]
-```
 
 ### From source
 

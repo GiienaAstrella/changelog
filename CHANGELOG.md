@@ -16,6 +16,11 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 - Changelog is now installable and importable under `giiena.me/changelog`.
   Past versions are (prior to v0.4.0) must be installed and imported from
   `github.com/ghifari169/changelog`.
+- Changelog is no longer available as an NPM package. Distribution through NPM required wrapper
+  script, which is now broken.
+  We do not have the bandwidth to fix it.
+  NPM distribution may return in the future, but for now the supported installation methods going
+  forward are as outlined in [README.md](https://github.com/GiienaAstrella/changelog#installation).
 - `urfave/cli` library has been upgraded to `v3`.
 
 ### Deprecated
