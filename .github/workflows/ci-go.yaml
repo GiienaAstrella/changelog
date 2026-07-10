@@ -10,7 +10,7 @@ on:
       - 'keepachangelog/**'
       - 'markdown/**'
     branches:
-      - '*'
+      - '**'
     tags-ignore:
       - '*'
   pull_request:
@@ -36,6 +36,8 @@ jobs:
             goarch: "386"
           - goos: "darwin"
             goarch: "arm"
+          - goos: "windows"
+            goarch: "arm"
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -51,11 +53,11 @@ jobs:
   test-go:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
         with:
           go-version-file: "go.mod"
-      - uses: robherley/go-test-action@v0.6.0
+      - uses: robherley/go-test-action@v1
         with:
           omit: |
             pie
