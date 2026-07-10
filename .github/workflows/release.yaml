@@ -62,15 +62,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        goos: [ linux, darwin, windows, freebsd ]
-        goarch: [ amd64, 386, arm, arm64 ]
+        goos: [ "linux", "darwin", "windows", "freebsd" ]
+        goarch: [ "amd64", "386", "arm", "arm64" ]
         exclude:
-          - goos: darwin
-            goarch: 386
-          - goos: darwin
-            goarch: arm
-          - goos: windows
-            goarch: arm
+          - goos: "darwin"
+            goarch: "386"
+          - goos: "darwin"
+            goarch: "arm"
+          - goos: "windows"
+            goarch: "arm"
     runs-on: ubuntu-24.04
     env:
       GOOS: ${{ matrix.goos }}
@@ -108,51 +108,4 @@ jobs:
             omitBodyDuringUpdate: true
             replacesArtifacts: false
             artifacts: './${{ env.ARCHIVE_NAME }}'
-            tag: ${{ env.VERSION_ID }}
-      - uses: s3-actions/s3cmd@v1.9.0
-        with:
-          provider: ${{ vars.S3_PROVIDER }}
-          region: ${{ vars.S3_REGION }}
-          access_key: ${{ secrets.S3_ACCESS_KEY }}
-          secret_key: ${{ secrets.S3_SECRET_KEY }}
-      - name: Upload archive to S3
-        env:
-          OUTPUT: ${{ vars.S3_BUCKET }}/${{ env.VERSION_ID }}/
-        run: |
-          s3cmd put "$ARCHIVE_NAME" -P "$OUTPUT"
-
-  build-wrapper:
-    permissions:
-      contents: write
-      id-token: write
-    needs: [prepare-release, build-go]
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          cache: "npm"
-          registry-url: "https://registry.npmjs.org"
-      - name: Install dependencies
-        run: npm ci
-      - name: Build wrapper and scripts
-        run: npm run build
-      - name: Prepare workspace
-        run: npm run clean
-      - name: Publish wrapper
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --provenance --access public
-      - name: Update release
-        uses: Wandalen/wretry.action@v3
-        with:
-          action: ncipollo/release-action@v1
-          attempt_limit: 5
-          attempt_delay: 250
-          with: |
-            allowUpdates: true
-            name: ${{ env.TAG_NAME }}
-            draft: false
-            omitBodyDuringUpdate: true
-            replacesArtifacts: false
             tag: ${{ env.VERSION_ID }}
