@@ -1,15 +1,16 @@
 package command
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
 	"slices"
 	"time"
 
-	"github.com/ghifari160/changelog/keepachangelog"
-	"github.com/ghifari160/changelog/markdown"
-	"github.com/urfave/cli/v2"
+	"giiena.me/changelog/keepachangelog"
+	"giiena.me/changelog/markdown"
+	"github.com/urfave/cli/v3"
 )
 
 func init() {
@@ -20,11 +21,12 @@ func init() {
 		HideHelp:               true,
 		UseShortOptionHandling: true,
 		Flags: []cli.Flag{
-			&cli.PathFlag{
-				Name:    "file",
-				Aliases: []string{"f"},
-				Value:   "CHANGELOG.md",
-				Usage:   "changelog file",
+			&cli.StringFlag{
+				Name:      "file",
+				TakesFile: true,
+				Aliases:   []string{"f"},
+				Value:     "CHANGELOG.md",
+				Usage:     "changelog file",
 			},
 		},
 		Action: CommandPromote,
@@ -33,33 +35,33 @@ func init() {
 	Register(&cmd)
 }
 
-func CommandPromote(ctx *cli.Context) error {
-	if !ctx.Args().Present() {
-		return cli.ShowSubcommandHelp(ctx)
+func CommandPromote(ctx context.Context, cmd *cli.Command) error {
+	if !cmd.Args().Present() {
+		return cli.ShowSubcommandHelp(cmd)
 	}
 
-	target := normalizeVersion(ctx.Args().First())
+	target := normalizeVersion(cmd.Args().First())
 
-	f, err := os.Open(ctx.Path("file"))
+	f, err := os.Open(cmd.String("file"))
 	if err != nil {
-		return cli.Exit(fmt.Sprintf("Cannot open changelog file %s!", ctx.Path("file")), 1)
+		return cli.Exit(fmt.Sprintf("Cannot open changelog file %s!", cmd.String("file")), 1)
 	}
 
 	data, err := io.ReadAll(f)
 	if err != nil {
-		return cli.Exit(fmt.Sprintf("Cannot read changelog file %s!", ctx.Path("file")), 1)
+		return cli.Exit(fmt.Sprintf("Cannot read changelog file %s!", cmd.String("file")), 1)
 	}
 
 	err = f.Close()
 	if err != nil {
-		return cli.Exit(fmt.Sprintf("Cannot close changelog file %s!", ctx.Path("file")), 1)
+		return cli.Exit(fmt.Sprintf("Cannot close changelog file %s!", cmd.String("file")), 1)
 	}
 
 	var cl keepachangelog.Changelog
 
 	err = markdown.Unmarshal(data, &cl)
 	if err != nil {
-		return cli.Exit(fmt.Sprintf("Cannot parse changelog file %s!\n%v", ctx.Path("file"), err), 2)
+		return cli.Exit(fmt.Sprintf("Cannot parse changelog file %s!\n%v", cmd.String("file"), err), 2)
 	}
 
 	if len(cl.Versions) < 1 {
@@ -87,9 +89,9 @@ func CommandPromote(ctx *cli.Context) error {
 	cl.Versions = slices.Insert(cl.Versions, 0, *unreleased)
 	cl.Versions = slices.Delete(cl.Versions, unreleasedIndex[0]+1, unreleasedIndex[1]+1)
 
-	f, err = os.OpenFile(ctx.Path("file"), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	f, err = os.OpenFile(cmd.String("file"), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
-		return cli.Exit(fmt.Sprintf("Cannot open changelog file %s!", ctx.Path("file")), 1)
+		return cli.Exit(fmt.Sprintf("Cannot open changelog file %s!", cmd.String("file")), 1)
 	}
 	defer f.Close()
 

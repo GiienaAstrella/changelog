@@ -1,9 +1,11 @@
 package command
 
 import (
+	"context"
 	"fmt"
+	"strings"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 func init() {
@@ -16,12 +18,13 @@ func init() {
 	Register(&cmd)
 }
 
-func CommandVersion(ctx *cli.Context) error {
-	ShowBanner(ctx)
+func CommandVersion(ctx context.Context, cmd *cli.Command) error {
+	ShowBanner(ctx, cmd)
 
 	return nil
 }
 
-func ShowBanner(ctx *cli.Context) {
-	fmt.Printf("%s v%s\n%s\n\n", ctx.App.Name, ctx.App.Version, ctx.App.Copyright)
+func ShowBanner(ctx context.Context, cmd *cli.Command) {
+	name := strings.ToUpper(cmd.Root().Name[0:1]) + cmd.Root().Name[1:]
+	fmt.Printf("%s v%s\n%s\n\n", name, cmd.Root().Version, cmd.Root().Copyright)
 }

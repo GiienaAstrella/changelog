@@ -3,7 +3,7 @@ package markdown_test
 import (
 	"testing"
 
-	"github.com/ghifari160/changelog/markdown"
+	"giiena.me/changelog/markdown"
 	"github.com/stretchr/testify/suite"
 )
 

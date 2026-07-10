@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ghifari160/changelog/keepachangelog"
-	"github.com/ghifari160/changelog/markdown"
+	"giiena.me/changelog/keepachangelog"
+	"giiena.me/changelog/markdown"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )

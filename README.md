@@ -73,9 +73,9 @@ npx changelog command [options] [arguments...]
 On systems with Go installed, run the tool install from source.
 
 ``` text
-go install github.com/ghifari160/changelog@latest
+go install giiena.me/changelog@latest
 ```
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0
 [DDV]: https://github.com/DiamondDrakeVentures
-[release]: https://github.com/Ghifari160/changelog/releases/latest
+[release]: https://github.com/GiienaAstrella/changelog/releases/latest

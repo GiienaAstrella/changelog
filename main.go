@@ -1,32 +1,32 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 
-	"github.com/ghifari160/changelog/command"
-	"github.com/urfave/cli/v2"
+	"giiena.me/changelog/command"
+	"github.com/urfave/cli/v3"
 )
 
 const helpTemplate = `USAGE:
-    {{.HelpName}}{{if .Commands}} command [command options]{{end}} {{if .ArgsUsage}}{{.ArgsUsage}}{{else}}[arguments...]{{end}}
+    {{.Name}}{{if .Commands}} command [command options]{{end}} {{if .ArgsUsage}}{{.ArgsUsage}}{{else}}[arguments...]{{end}}
 
 COMMANDS:
 {{range .Commands}}    {{join .Names ", "}}{{ "\t"}}{{.Usage}}{{ "\n" }}{{end}}
 `
 
 func main() {
-	cmd := cli.App{
-		Name:                  "Changelog",
-		HelpName:              "changelog",
-		Version:               "0.4.0",
-		Copyright:             "(c) 2025 GHIFARI160",
-		HideVersion:           true,
-		CustomAppHelpTemplate: helpTemplate,
-		Commands:              command.Retrieve(),
+	cmd := cli.Command{
+		Name:                          "changelog",
+		Version:                       "0.4.0",
+		Copyright:                     "(c) 2026 Giiena Astrella",
+		HideVersion:                   true,
+		CustomRootCommandHelpTemplate: helpTemplate,
+		Commands:                      command.Retrieve(),
 	}
 
-	if err := cmd.Run(os.Args); err != nil {
+	if err := cmd.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}
 }

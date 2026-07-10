@@ -13,6 +13,11 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ### Changed
 
+- Changelog is now installable and importable under `giiena.me/changelog`.
+  Past versions are (prior to v0.4.0) must be installed and imported from
+  `github.com/ghifari169/changelog`.
+- `urfave/cli` library has been upgraded to `v3`.
+
 ### Deprecated
 
 ### Removed

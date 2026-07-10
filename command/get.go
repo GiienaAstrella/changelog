@@ -1,15 +1,16 @@
 package command
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
 	"slices"
 	"strings"
 
-	"github.com/ghifari160/changelog/keepachangelog"
-	"github.com/ghifari160/changelog/markdown"
-	"github.com/urfave/cli/v2"
+	"giiena.me/changelog/keepachangelog"
+	"giiena.me/changelog/markdown"
+	"github.com/urfave/cli/v3"
 )
 
 func init() {
@@ -20,11 +21,12 @@ func init() {
 		HideHelp:               true,
 		UseShortOptionHandling: true,
 		Flags: []cli.Flag{
-			&cli.PathFlag{
-				Name:    "file",
-				Aliases: []string{"f"},
-				Value:   "CHANGELOG.md",
-				Usage:   "changelog file",
+			&cli.StringFlag{
+				Name:      "file",
+				TakesFile: true,
+				Aliases:   []string{"f"},
+				Value:     "CHANGELOG.md",
+				Usage:     "changelog file",
 			},
 			&cli.BoolFlag{
 				Name:    "hide-id",
@@ -39,37 +41,37 @@ func init() {
 	Register(&cmd)
 }
 
-func CommandGet(ctx *cli.Context) error {
-	if !ctx.Args().Present() {
-		return cli.ShowSubcommandHelp(ctx)
+func CommandGet(ctx context.Context, cmd *cli.Command) error {
+	if !cmd.Args().Present() {
+		return cli.ShowSubcommandHelp(cmd)
 	}
 
-	targets := []string{strings.ToLower(ctx.Args().First())}
-	for _, version := range ctx.Args().Tail() {
+	targets := []string{strings.ToLower(cmd.Args().First())}
+	for _, version := range cmd.Args().Tail() {
 		targets = append(targets, strings.ToLower(version))
 	}
 
 	normalizeVersions(targets)
 
-	f, err := os.OpenFile(ctx.Path("file"), os.O_RDONLY, 0644)
+	f, err := os.OpenFile(cmd.String("file"), os.O_RDONLY, 0644)
 	if err != nil {
-		return cli.Exit(fmt.Sprintf("Cannot open changelog file %s!", ctx.Path("file")), 1)
+		return cli.Exit(fmt.Sprintf("Cannot open changelog file %s!", cmd.String("file")), 1)
 	}
 	defer f.Close()
 
 	data, err := io.ReadAll(f)
 	if err != nil {
-		return cli.Exit(fmt.Sprintf("Cannot read changelog file %s!", ctx.Path("file")), 1)
+		return cli.Exit(fmt.Sprintf("Cannot read changelog file %s!", cmd.String("file")), 1)
 	}
 
 	var cl keepachangelog.Changelog
 
 	err = markdown.Unmarshal(data, &cl)
 	if err != nil {
-		return cli.Exit(fmt.Sprintf("Cannot parse changelog file %s!\n%v", ctx.Path("file"), err), 2)
+		return cli.Exit(fmt.Sprintf("Cannot parse changelog file %s!\n%v", cmd.String("file"), err), 2)
 	}
 
-	if !ctx.Bool("hide-id") {
+	if !cmd.Bool("hide-id") {
 		for _, ver := range cl.Versions {
 			if slices.Contains(targets, strings.ToLower(ver.ID)) {
 				md, err := markdown.Marshal(ver)
