@@ -36,7 +36,6 @@ There are various ways to install Changelog.
 ### Manual
 
 You can download the pre-compiled binaries for supported platforms from the [release] page.
-You can also download such binaries from the official distribution server: `https://projects.gassets.space/changelog/VERSION/changelog-PLATFORM-VERSION.tar.gz`, where `VERSION` is the version number (i.e. `0.1.0`) and `PLATFORM` is the platform identifier pair (i.e. `darwin-amd64`).
 
 Simply extract this archive.
 
