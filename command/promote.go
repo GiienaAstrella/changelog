@@ -17,7 +17,7 @@ func init() {
 	cmd := cli.Command{
 		Name:                   "promote",
 		Usage:                  "promote unreleased",
-		ArgsUsage:              "<version>",
+		ArgsUsage:              "<version> [link] [link title]",
 		HideHelp:               true,
 		UseShortOptionHandling: true,
 		Flags: []cli.Flag{
@@ -41,6 +41,8 @@ func CommandPromote(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	target := normalizeVersion(cmd.Args().First())
+	targetURL := cmd.Args().Get(1)
+	targetTitle := cmd.Args().Get(2)
 
 	f, err := os.Open(cmd.String("file"))
 	if err != nil {
@@ -65,6 +67,10 @@ func CommandPromote(ctx context.Context, cmd *cli.Command) error {
 	}
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("Cannot parse changelog file %s!\n%v", cmd.String("file"), err), 2)
+	}
+
+	if targetURL != "" {
+		cl.AddRefWithTitle(target, targetURL, targetTitle)
 	}
 
 	if len(cl.Versions) < 1 {

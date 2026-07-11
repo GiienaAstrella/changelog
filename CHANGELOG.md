@@ -32,7 +32,10 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 - All commands now properly support reference style links
   (`[Text]`, `[Text][key]`, and `[Text][]`).
   `get` will intelligently output references used in the version body.
-  `promote` and `prepare` will properly preserves references.
+  `promote` now optionally accepts link and title for the version page, which will be added to the
+  references.
+  It will also preserves utilized references.
+  `prepare` will properly preserves utilized references.
 - `urfave/cli` library has been upgraded to `v3`.
 
 ### Deprecated
