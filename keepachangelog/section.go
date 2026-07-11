@@ -17,7 +17,15 @@ type Section struct {
 // String returns the Markdown string for s.
 func (s Section) String() string {
 	var sb strings.Builder
-	s.string(&sb)
+	s.string(&sb, false)
+	return sb.String()
+}
+
+// SingleLineString returns the Markdown string for s.
+// Unlike String, sentences are not broken into multiple lines.
+func (s Section) SingleLineString() string {
+	var sb strings.Builder
+	s.string(&sb, true)
 	return sb.String()
 }
 
@@ -36,12 +44,14 @@ func (s *Section) UnmarshalMarkdown(data []byte) error {
 }
 
 // string encodes s to Markdown, writing into sb.
-func (s Section) string(sb *strings.Builder) {
+func (s Section) string(sb *strings.Builder, collapse bool) {
 	fmt.Fprintf(sb, "### %s\n\n", s.Heading)
 
 	for _, change := range s.Changes {
-		lines := strings.Split(change, ". ")
-		change = strings.Join(lines, ".\n"+prefix(change))
+		if !collapse {
+			lines := strings.Split(change, ". ")
+			change = strings.Join(lines, ".\n"+prefix(change))
+		}
 
 		fmt.Fprintf(sb, "%s\n", change)
 	}

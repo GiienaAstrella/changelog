@@ -34,7 +34,7 @@ func (c Changelog) String() string {
 	sb.WriteString("\n\n")
 
 	for _, ver := range c.Versions {
-		ver.string(&sb)
+		ver.string(&sb, false)
 	}
 
 	writeRefs(&sb, c.References)

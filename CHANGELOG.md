@@ -17,6 +17,9 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
   This parses `CHANGELOG.md` using Abstract Syntax Tree (AST) parsing.
 - Types in package `keepachangelog` now implements `String` function, which will generate the
   appropriate Markdown string for that type and its contents.
+- Types `Version` and `Section` in package `keepachangelog` now implements `SingleLineString`
+  functions, which will generate the appropriate Markdown string for that type on its contents.
+  Unlike `String`, `SingleLineString` does not break sentences into multiple lines.
 
 ### Changed
 

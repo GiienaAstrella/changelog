@@ -22,7 +22,16 @@ type Version struct {
 // String returns the Markdown string for v.
 func (v Version) String() string {
 	var sb strings.Builder
-	v.string(&sb)
+	v.string(&sb, false)
+	writeRefs(&sb, v.References)
+	return sb.String()
+}
+
+// SingleLineString returns the Markdown string for v.
+// Unlike String, sentences are not broken into multiple lines.
+func (v Version) SingleLineString() string {
+	var sb strings.Builder
+	v.string(&sb, true)
 	writeRefs(&sb, v.References)
 	return sb.String()
 }
@@ -70,35 +79,22 @@ func (v *Version) UnmarshalMarkdown(data []byte) error {
 }
 
 // string encodes v to Markdown, writing into sb.
-func (v Version) string(sb *strings.Builder) {
-	sb.WriteString("## ")
-
-	if v.Unreleased {
-		sb.WriteString("[UNRELEASED]")
-	} else {
-		fmt.Fprintf(sb, "[%s]", v.ID)
+func (v Version) string(sb *strings.Builder, collapse bool) {
+	switch {
+	case v.Unreleased:
+		sb.WriteString("## [UNRELEASED]\n\n")
+	case v.Yanked:
+		fmt.Fprintf(sb, "## [%s] - %s [YANKED]\n\n", v.ID, v.ReleaseDate.Format(LayoutChangelog))
+	default:
+		fmt.Fprintf(sb, "## [%s] - %s\n\n", v.ID, v.ReleaseDate.Format(LayoutChangelog))
 	}
-
-	if !v.Unreleased && !v.ReleaseDate.IsZero() || v.Yanked {
-		sb.WriteString(" -")
-	}
-
-	if !v.Unreleased && !v.ReleaseDate.IsZero() {
-		fmt.Fprintf(sb, " %s", v.ReleaseDate.Format(LayoutChangelog))
-	}
-
-	if !v.Unreleased && v.Yanked {
-		fmt.Fprint(sb, " [YANKED]")
-	}
-
-	sb.WriteString("\n\n")
 
 	for _, content := range v.Sections {
 		if !v.Unreleased && len(content.Changes) < 1 {
 			continue
 		}
 
-		content.string(sb)
+		content.string(sb, collapse)
 	}
 }
 
