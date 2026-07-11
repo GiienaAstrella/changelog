@@ -4,6 +4,9 @@ import "fmt"
 
 // Marshaler is the interface implemented by types that can marshal themselves into a Markdown
 // formatted representation.
+//
+// Deprecated: implement [fmt.Stringer] instead.
+// Markdown strings are just strings.
 type Marshaler interface {
 	MarshalMarkdown() ([]byte, error)
 }
@@ -14,6 +17,8 @@ type Marshaler interface {
 // If v implements [fmt.Stringer] instead, Marshal calls [fmt.Stringer.String].
 // If v implements [fmt.GoStringer] instead, Marshal calls [fmt.GoStringer.GoString].
 // Otherwise, Marshal calls [fmt.Sprintf] to format v as is.
+//
+// Deprecated: use the type's String function instead.
 func Marshal(v any) ([]byte, error) {
 	if marshaler, ok := v.(Marshaler); ok {
 		return marshaler.MarshalMarkdown()

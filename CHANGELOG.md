@@ -35,6 +35,9 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 - Implementations of `markdown.Unmarshaler` interface in all types in package `keepachangelog`.
 - Implementations of `markdown.Marshaler` interface in all types in package `keepachangelog`.
+- Package `markdown`.
+  For marshaling, the type should implement [`fmt.Stringer`](https://pkg.go.dev/fmt#Stringer).
+  For parsing, refer to the target type's parsing function.
 
 ### Removed
 
