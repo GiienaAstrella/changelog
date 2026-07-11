@@ -13,6 +13,9 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 - Global flag `--old-parser` (`-x`) to disable the new experimental parser and use the old text
   parser implementation.
+- `--single-line` (`-s`) flag for `get` command.
+  With this flag set, `get` will output changes for specific version(s) without breaking
+  sentences in a paragraph into their own lines.
 - New experimental `Parse` function in package `keepachangelog`.
   This parses `CHANGELOG.md` using Abstract Syntax Tree (AST) parsing.
 - Types in package `keepachangelog` now implements `String` function, which will generate the

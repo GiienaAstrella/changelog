@@ -34,6 +34,12 @@ func init() {
 				Value:   false,
 				Usage:   "hide version IDs (i.e. aggregate the sections)",
 			},
+			&cli.BoolFlag{
+				Name:    "single-line",
+				Aliases: []string{"s"},
+				Value:   false,
+				Usage:   "do not break sentences into their own lines",
+			},
 		},
 		Action: CommandGet,
 	}
@@ -77,12 +83,11 @@ func CommandGet(ctx context.Context, cmd *cli.Command) error {
 	if !cmd.Bool("hide-id") {
 		for _, ver := range cl.Versions {
 			if slices.Contains(targets, strings.ToLower(ver.ID)) {
-				md, err := markdown.Marshal(ver)
-				if err != nil {
-					return cli.Exit(fmt.Sprintf("Cannot encode changelog: %v", err), 3)
+				if !cmd.Bool("single-line") {
+					fmt.Printf("%s", ver)
+				} else {
+					fmt.Printf("%s", ver.SingleLineString())
 				}
-
-				fmt.Printf("%s", md)
 			}
 		}
 	} else {
@@ -101,12 +106,11 @@ func CommandGet(ctx context.Context, cmd *cli.Command) error {
 		}
 
 		for _, section := range sections {
-			md, err := markdown.Marshal(section)
-			if err != nil {
-				return cli.Exit(fmt.Sprintf("Cannot encode changelog: %v", err), 3)
+			if !cmd.Bool("single-line") {
+				fmt.Printf("%s", section)
+			} else {
+				fmt.Printf("%s", section.SingleLineString())
 			}
-
-			fmt.Printf("%s", md)
 		}
 	}
 
