@@ -18,6 +18,13 @@ type Version struct {
 	Sections    []Section `json:"contents"`
 }
 
+// String returns the Markdown string for v.
+func (v Version) String() string {
+	var sb strings.Builder
+	v.string(&sb)
+	return sb.String()
+}
+
 // MarshalJSON implements [json.Marshaler].
 //
 // MarshalJSON skips empty Sections on released versions.
@@ -48,11 +55,7 @@ func (v Version) MarshalJSON() ([]byte, error) {
 
 // MarshalMarkdown implements [markdown.Marshaler].
 func (v Version) MarshalMarkdown() ([]byte, error) {
-	var sb strings.Builder
-
-	v.marshalMarkdown(&sb)
-
-	return []byte(sb.String()), nil
+	return []byte(v.String()), nil
 }
 
 // UnmarshalMarkdown implements [markdown.Unmarshaler].
@@ -60,8 +63,8 @@ func (v *Version) UnmarshalMarkdown(data []byte) error {
 	return v.unmarshalMarkdown(data)
 }
 
-// marshalMarkdown encodes v to Markdown, writing into sb.
-func (v Version) marshalMarkdown(sb *strings.Builder) {
+// string encodes v to Markdown, writing into sb.
+func (v Version) string(sb *strings.Builder) {
 	sb.WriteString("## ")
 
 	if v.Unreleased {
@@ -89,7 +92,7 @@ func (v Version) marshalMarkdown(sb *strings.Builder) {
 			continue
 		}
 
-		content.marshalMarkdown(sb)
+		content.string(sb)
 	}
 }
 

@@ -15,6 +15,8 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
   parser implementation.
 - New experimental `Parse` function in package `keepachangelog`.
   This parses `CHANGELOG.md` using Abstract Syntax Tree (AST) parsing.
+- Types in package `keepachangelog` now implements `String` function, which will generate the
+  appropriate Markdown string for that type and its contents.
 
 ### Changed
 

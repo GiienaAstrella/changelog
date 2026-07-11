@@ -19,27 +19,12 @@ type Changelog struct {
 	Versions         []Version `json:"versions"`
 }
 
-// MarshalMarkdown implements [markdown.Marshaler].
-func (c Changelog) MarshalMarkdown() ([]byte, error) {
+// String returns the Markdown string for c.
+func (c Changelog) String() string {
 	var sb strings.Builder
 
-	c.marshalMarkdown(&sb)
-
-	md := strings.TrimSpace(sb.String())
-	md += "\n"
-
-	return []byte(md), nil
-}
-
-// UnmarshalMarkdown implements [markdown.Unmarshaler].
-func (c *Changelog) UnmarshalMarkdown(data []byte) error {
-	return c.unmarshalMarkdown(data)
-}
-
-// marshalMarkdown encodes c to Markdown, writing into sb.
-func (c Changelog) marshalMarkdown(sb *strings.Builder) {
 	if len(c.DisableLintRules) > 0 {
-		fmt.Fprintf(sb, "<!-- markdownlint-disable %s -->", strings.Join(c.DisableLintRules, " "))
+		fmt.Fprintf(&sb, "!-- markdownlint-disable %s -->", strings.Join(c.DisableLintRules, " "))
 		sb.WriteString("\n\n")
 	}
 
@@ -48,8 +33,20 @@ func (c Changelog) marshalMarkdown(sb *strings.Builder) {
 	sb.WriteString("\n\n")
 
 	for _, ver := range c.Versions {
-		ver.marshalMarkdown(sb)
+		ver.string(&sb)
 	}
+
+	return strings.TrimSpace(sb.String()) + "\n"
+}
+
+// MarshalMarkdown implements [markdown.Marshaler].
+func (c Changelog) MarshalMarkdown() ([]byte, error) {
+	return []byte(c.String()), nil
+}
+
+// UnmarshalMarkdown implements [markdown.Unmarshaler].
+func (c *Changelog) UnmarshalMarkdown(data []byte) error {
+	return c.unmarshalMarkdown(data)
 }
 
 // unmarshalMarkdown decodes a Changelog in Markdown representation from data, storing the parsed

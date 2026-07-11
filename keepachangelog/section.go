@@ -14,13 +14,16 @@ type Section struct {
 	Changes []string `json:"changes"`
 }
 
+// String returns the Markdown string for s.
+func (s Section) String() string {
+	var sb strings.Builder
+	s.string(&sb)
+	return sb.String()
+}
+
 // MarshalMarkdown implements [markdown.Marshaler].
 func (s Section) MarshalMarkdown() ([]byte, error) {
-	var sb strings.Builder
-
-	s.marshalMarkdown(&sb)
-
-	return []byte(sb.String()), nil
+	return []byte(s.String()), nil
 }
 
 // UnmarshalMarkdown implements [markdown.Unmarshaler].
@@ -28,8 +31,8 @@ func (s *Section) UnmarshalMarkdown(data []byte) error {
 	return s.unmarshalMarkdown(data)
 }
 
-// marshalMarkdown encodes s to Markdown, writing into sb.
-func (s Section) marshalMarkdown(sb *strings.Builder) {
+// string encodes s to Markdown, writing into sb.
+func (s Section) string(sb *strings.Builder) {
 	fmt.Fprintf(sb, "### %s\n\n", s.Heading)
 
 	for _, change := range s.Changes {
