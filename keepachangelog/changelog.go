@@ -14,9 +14,10 @@ import (
 // Changelog represents a chronologically ordered list of notable changes for each version of
 // of a project.
 type Changelog struct {
-	Description      string    `json:"description"`
-	DisableLintRules []string  `json:"disable_lint_rules,omitempty"`
-	Versions         []Version `json:"versions"`
+	Description      string               `json:"description"`
+	DisableLintRules []string             `json:"disable_lint_rules,omitempty"`
+	Versions         []Version            `json:"versions"`
+	References       map[string]Reference `json:"-"`
 }
 
 // String returns the Markdown string for c.
@@ -24,7 +25,7 @@ func (c Changelog) String() string {
 	var sb strings.Builder
 
 	if len(c.DisableLintRules) > 0 {
-		fmt.Fprintf(&sb, "!-- markdownlint-disable %s -->", strings.Join(c.DisableLintRules, " "))
+		fmt.Fprintf(&sb, "<!-- markdownlint-disable %s -->", strings.Join(c.DisableLintRules, " "))
 		sb.WriteString("\n\n")
 	}
 
@@ -35,6 +36,8 @@ func (c Changelog) String() string {
 	for _, ver := range c.Versions {
 		ver.string(&sb)
 	}
+
+	writeRefs(&sb, c.References)
 
 	return strings.TrimSpace(sb.String()) + "\n"
 }
@@ -116,6 +119,8 @@ func Parse(source []byte) (cl Changelog, err error) {
 	reader := text.NewReader(source)
 	doc := md.Parser().Parse(reader)
 
+	cl.References = make(map[string]Reference)
+
 	var version *Version
 	var section *Section
 
@@ -126,7 +131,7 @@ func Parse(source []byte) (cl Changelog, err error) {
 
 		switch node := node.(type) {
 		case *ast.Heading:
-			text := extractText(node, source)
+			text := extractText(node, source, cl.References)
 
 			switch node.Level {
 			case 1:
@@ -144,18 +149,19 @@ func Parse(source []byte) (cl Changelog, err error) {
 					cl.Versions = append(cl.Versions, *version)
 				}
 				version = new(v)
+				version.References = cl.References
 			case 3:
 				if section != nil && version != nil {
 					version.Sections = append(version.Sections, *section)
 				}
 				section = new(Section)
-				section.Heading = string(extractText(node, source))
+				section.Heading = string(extractText(node, source, cl.References))
 				section.Changes = make([]string, 0)
 			}
 
 		case *ast.Paragraph:
 			if version == nil {
-				p := string(extractMarkdown(node, source, nil, true))
+				p := string(extractMarkdown(node, source, cl.References, true))
 				if cl.Description == "" {
 					cl.Description = p
 				} else {
@@ -174,7 +180,7 @@ func Parse(source []byte) (cl Changelog, err error) {
 				}
 				var buf bytes.Buffer
 				buf.WriteString("- ")
-				buf.Write(extractMarkdown(li, source, nil, false))
+				buf.Write(extractMarkdown(li, source, cl.References, false))
 				section.Changes = append(section.Changes, buf.String())
 			}
 			return ast.WalkSkipChildren, nil
@@ -205,6 +211,13 @@ func Parse(source []byte) (cl Changelog, err error) {
 
 	if cl.DisableLintRules == nil {
 		cl.DisableLintRules = []string{}
+	}
+
+	if len(cl.References) < 1 {
+		cl.References = nil
+		for i := range cl.Versions {
+			cl.Versions[i].References = nil
+		}
 	}
 
 	return

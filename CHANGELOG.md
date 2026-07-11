@@ -29,6 +29,10 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
   NPM distribution may return in the future, but for now the supported installation methods going
   forward are as outlined in [README.md](https://github.com/GiienaAstrella/changelog#installation).
 - All commands now use the new experimental AST parser.
+- All commands now properly support reference style links
+  (`[Text]`, `[Text][key]`, and `[Text][]`).
+  `get` will intelligently output references used in the version body.
+  `promote` and `prepare` will properly preserves references.
 - `urfave/cli` library has been upgraded to `v3`.
 
 ### Deprecated

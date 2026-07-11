@@ -11,17 +11,19 @@ import (
 
 // A Version contains all changes for a given version.
 type Version struct {
-	ID          string    `json:"name"`
-	ReleaseDate time.Time `json:"release_date"`
-	Unreleased  bool      `json:"unreleased"`
-	Yanked      bool      `json:"yanked"`
-	Sections    []Section `json:"contents"`
+	ID          string               `json:"name"`
+	ReleaseDate time.Time            `json:"release_date"`
+	Unreleased  bool                 `json:"unreleased"`
+	Yanked      bool                 `json:"yanked"`
+	Sections    []Section            `json:"contents"`
+	References  map[string]Reference `json:"-"`
 }
 
 // String returns the Markdown string for v.
 func (v Version) String() string {
 	var sb strings.Builder
 	v.string(&sb)
+	writeRefs(&sb, v.References)
 	return sb.String()
 }
 
