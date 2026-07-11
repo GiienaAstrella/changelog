@@ -42,6 +42,23 @@ func (c Changelog) String() string {
 	return strings.TrimSpace(sb.String()) + "\n"
 }
 
+// AddRef adds a reference for reference style links.
+func (c *Changelog) AddRef(label, destination string) {
+	c.AddRefWithTitle(label, destination, "")
+}
+
+// AddRefWithTitle adds a reference for reference style links.
+func (c *Changelog) AddRefWithTitle(label, destination, title string) {
+	if c.References == nil {
+		c.initRefs()
+	}
+	c.References[label] = Reference{
+		Label:       label,
+		Destination: destination,
+		Title:       title,
+	}
+}
+
 // MarshalMarkdown implements [markdown.Marshaler].
 //
 // Deprecated: use String.
@@ -54,6 +71,24 @@ func (c Changelog) MarshalMarkdown() ([]byte, error) {
 // Deprecated: use Parse.
 func (c *Changelog) UnmarshalMarkdown(data []byte) error {
 	return c.unmarshalMarkdown(data)
+}
+
+// initRefs initiates c.References, then iterates through c.Versions and sets each References to
+// c.References.
+func (c *Changelog) initRefs() {
+	c.References = make(map[string]Reference)
+	for i := range c.Versions {
+		c.Versions[i].References = c.References
+	}
+}
+
+// clearRefs sets c.References to nil, then iterates through c.Versions and sets each References to
+// nil.
+func (c *Changelog) clearRefs() {
+	c.References = nil
+	for i := range c.Versions {
+		c.Versions[i].References = nil
+	}
 }
 
 // unmarshalMarkdown decodes a Changelog in Markdown representation from data, storing the parsed
@@ -214,10 +249,7 @@ func Parse(source []byte) (cl Changelog, err error) {
 	}
 
 	if len(cl.References) < 1 {
-		cl.References = nil
-		for i := range cl.Versions {
-			cl.Versions[i].References = nil
-		}
+		cl.clearRefs()
 	}
 
 	return
