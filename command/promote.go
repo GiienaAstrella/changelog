@@ -58,8 +58,11 @@ func CommandPromote(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	var cl keepachangelog.Changelog
-
-	err = markdown.Unmarshal(data, &cl)
+	if cmd.Bool("old-parser") {
+		err = markdown.Unmarshal(data, &cl)
+	} else {
+		cl, err = keepachangelog.Parse(data)
+	}
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("Cannot parse changelog file %s!\n%v", cmd.String("file"), err), 2)
 	}

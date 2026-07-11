@@ -24,6 +24,14 @@ func main() {
 		HideVersion:                   true,
 		CustomRootCommandHelpTemplate: helpTemplate,
 		Commands:                      command.Retrieve(),
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:    "old-parser",
+				Aliases: []string{"x"},
+				Value:   false,
+				Usage:   "use the old text parser implementation",
+			},
+		},
 	}
 
 	if err := cmd.Run(context.Background(), os.Args); err != nil {

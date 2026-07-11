@@ -11,6 +11,8 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ### Added
 
+- Global flag `--old-parser` (`-x`) to disable the new experimental parser and use the old text
+  parser implementation.
 - New experimental `Parse` function in package `keepachangelog`.
   This parses `CHANGELOG.md` using Abstract Syntax Tree (AST) parsing.
 
@@ -24,6 +26,7 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
   We do not have the bandwidth to fix it.
   NPM distribution may return in the future, but for now the supported installation methods going
   forward are as outlined in [README.md](https://github.com/GiienaAstrella/changelog#installation).
+- All commands now use the new experimental AST parser.
 - `urfave/cli` library has been upgraded to `v3`.
 
 ### Deprecated
