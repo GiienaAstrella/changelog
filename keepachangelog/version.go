@@ -1,6 +1,7 @@
 package keepachangelog
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"slices"
@@ -146,4 +147,26 @@ func (v *Version) unmarshalMarkdown(data []byte) error {
 	}
 
 	return err
+}
+
+// parseVersion parses Version from heading string.
+func parseVersion(heading []byte) (v Version, err error) {
+	groups := findNamedSubmatch(np_verPattern, heading)
+	if groups == nil {
+		err = fmt.Errorf("invalid version heading %q", heading)
+		return
+	}
+
+	v.ID = string(groups["version"])
+	if v.ID[0:1] == "[" {
+		v.ID = v.ID[1 : len(v.ID)-1]
+	}
+
+	v.Yanked = bytes.EqualFold(groups["yanked"], []byte("YANKED"))
+
+	v.Unreleased = strings.EqualFold(v.ID, "UNRELEASED")
+	if date := string(groups["date"]); date != "" {
+		v.ReleaseDate, err = time.Parse(LayoutChangelog, string(date))
+	}
+	return
 }

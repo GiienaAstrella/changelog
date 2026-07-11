@@ -71,6 +71,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0).
 
 		s.Equal(c, cl)
 	})
+
+	s.Run("ParseMarkdown", func() {
+		cl, err := keepachangelog.Parse([]byte(marshaledMD))
+		s.Require().NoError(err)
+		s.Equal(c, cl)
+	})
 }
 
 func (s *ChangelogTestSuite) TestReleased() {
@@ -135,6 +141,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0).
 		s.Equal(sanitizeCL(s.T(), c), cl)
 	})
 
+	s.Run("ParseMarkdown", func() {
+		cl, err := keepachangelog.Parse([]byte(marshaledMD))
+		s.Require().NoError(err)
+		s.Equal(c, cl)
+	})
+
 	s.Run("MarshalJSON", func() {
 		j, err := json.Marshal(c)
 		s.Require().NoError(err)
@@ -190,6 +202,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0).
 
 		s.Equal(c, cl)
 	})
+
+	s.Run("ParseMarkdown", func() {
+		cl, err := keepachangelog.Parse([]byte(marshaledMD))
+		s.Require().NoError(err)
+		s.Equal(c, cl)
+	})
 }
 
 func (s *ChangelogTestSuite) TestDisableLintRules() {
@@ -219,6 +237,12 @@ func (s *ChangelogTestSuite) TestDisableLintRules() {
 		err := markdown.Unmarshal([]byte(marshaledMD), &cl)
 		s.Require().NoError(err)
 
+		s.ElementsMatch(c.DisableLintRules, cl.DisableLintRules)
+	})
+
+	s.Run("ParseMarkdown", func() {
+		cl, err := keepachangelog.Parse([]byte(marshaledMD))
+		s.Require().NoError(err)
 		s.ElementsMatch(c.DisableLintRules, cl.DisableLintRules)
 	})
 }

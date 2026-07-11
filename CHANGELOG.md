@@ -11,6 +11,9 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ### Added
 
+- New experimental `Parse` function in package `keepachangelog`.
+  This parses `CHANGELOG.md` using Abstract Syntax Tree (AST) parsing.
+
 ### Changed
 
 - Changelog is now installable and importable under `giiena.me/changelog`.

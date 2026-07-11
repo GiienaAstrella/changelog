@@ -1,9 +1,14 @@
 package keepachangelog
 
 import (
+	"bytes"
 	"fmt"
 	"slices"
 	"strings"
+
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/text"
 )
 
 // Changelog represents a chronologically ordered list of notable changes for each version of
@@ -100,4 +105,104 @@ func (c *Changelog) unmarshalMarkdown(data []byte) error {
 	}
 
 	return nil
+}
+
+// Parse parses Changelog from source using an AST-based parser.
+func Parse(source []byte) (cl Changelog, err error) {
+	md := goldmark.New()
+	reader := text.NewReader(source)
+	doc := md.Parser().Parse(reader)
+
+	var version *Version
+	var section *Section
+
+	err = ast.Walk(doc, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
+		if !entering {
+			return ast.WalkContinue, nil
+		}
+
+		switch node := node.(type) {
+		case *ast.Heading:
+			text := extractText(node, source)
+
+			switch node.Level {
+			case 1:
+				return ast.WalkContinue, nil
+			case 2:
+				v, err := parseVersion(text)
+				if err != nil {
+					return ast.WalkStop, err
+				}
+				if version != nil {
+					if section != nil {
+						version.Sections = append(version.Sections, *section)
+						section = nil
+					}
+					cl.Versions = append(cl.Versions, *version)
+				}
+				version = new(v)
+			case 3:
+				if section != nil && version != nil {
+					version.Sections = append(version.Sections, *section)
+				}
+				section = new(Section)
+				section.Heading = string(extractText(node, source))
+				section.Changes = make([]string, 0)
+			}
+
+		case *ast.Paragraph:
+			if version == nil {
+				p := string(extractMarkdown(node, source, nil, true))
+				if cl.Description == "" {
+					cl.Description = p
+				} else {
+					cl.Description += "\n\n" + p
+				}
+			}
+
+		case *ast.List:
+			if section == nil {
+				return ast.WalkSkipChildren, nil
+			}
+			for item := node.FirstChild(); item != nil; item = item.NextSibling() {
+				li, ok := item.(*ast.ListItem)
+				if !ok {
+					continue
+				}
+				var buf bytes.Buffer
+				buf.WriteString("- ")
+				buf.Write(extractMarkdown(li, source, nil, false))
+				section.Changes = append(section.Changes, buf.String())
+			}
+			return ast.WalkSkipChildren, nil
+
+		case *ast.HTMLBlock:
+			rules := extractLintRules(node, source)
+			if len(cl.DisableLintRules) > 0 {
+				for _, rule := range rules {
+					if !slices.Contains(cl.DisableLintRules, rule) {
+						cl.DisableLintRules = append(cl.DisableLintRules, rule)
+					}
+				}
+			} else {
+				cl.DisableLintRules = rules
+			}
+		}
+		return ast.WalkContinue, nil
+	})
+
+	if version != nil {
+		if section != nil {
+			version.Sections = append(version.Sections, *section)
+			section = nil
+		}
+		cl.Versions = append(cl.Versions, *version)
+		version = nil
+	}
+
+	if cl.DisableLintRules == nil {
+		cl.DisableLintRules = []string{}
+	}
+
+	return
 }
