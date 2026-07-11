@@ -22,11 +22,15 @@ func (s Section) String() string {
 }
 
 // MarshalMarkdown implements [markdown.Marshaler].
+//
+// Deprecated: use String.
 func (s Section) MarshalMarkdown() ([]byte, error) {
 	return []byte(s.String()), nil
 }
 
 // UnmarshalMarkdown implements [markdown.Unmarshaler].
+//
+// Deprecated: use Parse.
 func (s *Section) UnmarshalMarkdown(data []byte) error {
 	return s.unmarshalMarkdown(data)
 }
@@ -49,6 +53,8 @@ func (s Section) string(sb *strings.Builder) {
 
 // unmarshalMarkdown decodes a Section in Markdown representation from data, storing the parsed
 // values in s.
+//
+// Deprecated: use Parse.
 func (s *Section) unmarshalMarkdown(data []byte) error {
 	normalized := normalize(string(data))
 

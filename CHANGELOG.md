@@ -33,6 +33,9 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ### Deprecated
 
+- Implementations of `markdown.Unmarshaler` interface in all types in package `keepachangelog`.
+- Implementations of `markdown.Marshaler` interface in all types in package `keepachangelog`.
+
 ### Removed
 
 ### Fixed

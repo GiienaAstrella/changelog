@@ -40,17 +40,23 @@ func (c Changelog) String() string {
 }
 
 // MarshalMarkdown implements [markdown.Marshaler].
+//
+// Deprecated: use String.
 func (c Changelog) MarshalMarkdown() ([]byte, error) {
 	return []byte(c.String()), nil
 }
 
 // UnmarshalMarkdown implements [markdown.Unmarshaler].
+//
+// Deprecated: use Parse.
 func (c *Changelog) UnmarshalMarkdown(data []byte) error {
 	return c.unmarshalMarkdown(data)
 }
 
 // unmarshalMarkdown decodes a Changelog in Markdown representation from data, storing the parsed
 // values in c.
+//
+// Deprecated: use Parse.
 func (c *Changelog) unmarshalMarkdown(data []byte) error {
 	normalized := normalize(string(data))
 

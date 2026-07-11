@@ -54,11 +54,15 @@ func (v Version) MarshalJSON() ([]byte, error) {
 }
 
 // MarshalMarkdown implements [markdown.Marshaler].
+//
+// Deprecated: use String.
 func (v Version) MarshalMarkdown() ([]byte, error) {
 	return []byte(v.String()), nil
 }
 
 // UnmarshalMarkdown implements [markdown.Unmarshaler].
+//
+// Deprecated: use Parse.
 func (v *Version) UnmarshalMarkdown(data []byte) error {
 	return v.unmarshalMarkdown(data)
 }
@@ -98,6 +102,8 @@ func (v Version) string(sb *strings.Builder) {
 
 // unmarshalMarkdown decodes a Version in Markdown representation from data, storing the parsed
 // values in v.
+//
+// Deprecated: use Parse.
 func (v *Version) unmarshalMarkdown(data []byte) error {
 	var err error
 	normalized := normalize(string(data))
