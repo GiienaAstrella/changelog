@@ -4,8 +4,8 @@
 
 All notable changes in Changelog will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-This project attempts to adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog].
+This project attempts to adhere to [Semantic Versioning].
 
 ## [UNRELEASED]
 
@@ -15,20 +15,20 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
   parser implementation.
 - `--single-line` (`-s`) flag for `get` command.
   With this flag set, `get` will output changes for specific version(s) without breaking
-  sentences in a paragraph into their own lines.
+  sentences in a paragraph into their own lines ([#3]).
 - New experimental `Parse` function in package `keepachangelog`.
   This parses `CHANGELOG.md` using Abstract Syntax Tree (AST) parsing.
 - Types in package `keepachangelog` now implements `String` function, which will generate the
   appropriate Markdown string for that type and its contents.
 - Types `Version` and `Section` in package `keepachangelog` now implements `SingleLineString`
   functions, which will generate the appropriate Markdown string for that type on its contents.
-  Unlike `String`, `SingleLineString` does not break sentences into multiple lines.
+  Unlike `String`, `SingleLineString` does not break sentences into multiple lines ([#3]).
 
 ### Changed
 
 - Changelog is now installable and importable under `giiena.me/changelog`.
   Past versions are (prior to v0.4.0) must be installed and imported from
-  `github.com/ghifari169/changelog`.
+  `github.com/ghifari160/changelog`.
 - Changelog is no longer available as an NPM package. Distribution through NPM required wrapper
   script, which is now broken.
   We do not have the bandwidth to fix it.
@@ -41,7 +41,7 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
   `promote` now optionally accepts link and title for the version page, which will be added to the
   references.
   It will also preserves utilized references.
-  `prepare` will properly preserves utilized references.
+  `prepare` will properly preserves utilized references ([#4]).
 - `urfave/cli` library has been upgraded to `v3`.
 
 ### Deprecated
@@ -62,7 +62,7 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 
 ### Fixed
 
-- Fixed an issue where sublists are not preserved on operations (#2).
+- Fixed an issue where sublists are not preserved on operations ([#2]).
 
 ## [0.3.1] - 2025-07-25
 
@@ -105,7 +105,7 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
 - Package `markdown`.
   It implements encoding and decoding of data from and to Markdown formatted representation.
 - Package `keepachangelog`.
-  It implements types and functions to assist in maintaining a Changelog based on the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+  It implements types and functions to assist in maintaining a Changelog based on the [Keep a Changelog] format.
 - Command `get`, which shows changes for a specific version(s).
 - Command `version`, which prints the app version.
 - Command `promote`, which promotes unreleased draft to be the next release version.
@@ -115,3 +115,15 @@ This project attempts to adhere to [Semantic Versioning](https://semver.org/spec
   On supported platforms, the pre-install hook download and install the precompiled binary for that platform.
   It can also be imported as a module, which will return the path to the changelog binary.
   Note: installation will silently fail of installed with `--ignore-scripts`.
+
+[#2]: https://github.com/GiienaAstrella/changelog/issues/2
+[#3]: https://github.com/GiienaAstrella/changelog/issues/3
+[#4]: https://github.com/GiienaAstrella/changelog/issues/4
+[0.1.0]: https://github.com/GiienaAstrella/changelog/releases/tag/0.1.0
+[0.2.0]: https://github.com/GiienaAstrella/changelog/releases/tag/0.2.0
+[0.3.0]: https://github.com/GiienaAstrella/changelog/releases/tag/0.3.0
+[0.3.1]: https://github.com/GiienaAstrella/changelog/releases/tag/0.3.1
+[0.3.2]: https://github.com/GiienaAstrella/changelog/releases/tag/0.3.2
+[Keep a Changelog]: https://keepachangelog.com/en/1.1.0/
+[Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[UNRELEASED]: https://github.com/GiienaAstrella/changelog/compare/0.3.2...HEAD
