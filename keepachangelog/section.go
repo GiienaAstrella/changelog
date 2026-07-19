@@ -48,12 +48,28 @@ func (s Section) string(sb *strings.Builder, collapse bool) {
 	fmt.Fprintf(sb, "### %s\n\n", s.Heading)
 
 	for _, change := range s.Changes {
-		if !collapse {
-			lines := strings.Split(change, ". ")
-			change = strings.Join(lines, ".\n"+prefix(change))
-		}
+		if collapse {
+			lines := strings.Split(change, "\n")
+			sb.WriteString(lines[0])
 
-		fmt.Fprintf(sb, "%s\n", change)
+			for i := 1; i < len(lines); i++ {
+				prev, curr := lines[i-1], lines[i]
+				trimmedCurr := strings.TrimLeft(curr, " ")
+
+				if (prev == "" || curr == "") ||
+					strings.HasSuffix(prev, "  ") ||
+					strings.HasPrefix(trimmedCurr, "- ") {
+					sb.WriteRune('\n')
+					sb.WriteString(curr)
+				} else {
+					sb.WriteRune(' ')
+					sb.WriteString(trimmedCurr)
+				}
+			}
+			sb.WriteRune('\n')
+		} else {
+			fmt.Fprintf(sb, "%s\n", change)
+		}
 	}
 
 	if len(s.Changes) > 0 {
@@ -110,18 +126,4 @@ func (s *Section) unmarshalMarkdown(data []byte) error {
 	}
 
 	return nil
-}
-
-// prefix returns the indentation prefix of line.
-// This is useful when splitting sentences into multiple lines.
-func prefix(line string) string {
-	leadingSpaces := len(line) - len(strings.TrimLeft(line, " "))
-	leadingTabs := len(line) - len(strings.TrimLeft(line, "\t"))
-
-	line = strings.TrimLeft(line, "\t ")
-	if line[:1] == "-" {
-		leadingSpaces += 2
-	}
-
-	return strings.Repeat("\t", leadingTabs) + strings.Repeat(" ", leadingSpaces)
 }

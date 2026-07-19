@@ -1,7 +1,6 @@
 package keepachangelog
 
 import (
-	"bytes"
 	"fmt"
 	"slices"
 	"strings"
@@ -213,10 +212,8 @@ func Parse(source []byte) (cl Changelog, err error) {
 				if !ok {
 					continue
 				}
-				var buf bytes.Buffer
-				buf.WriteString("- ")
-				buf.Write(extractMarkdown(li, source, cl.References, false))
-				section.Changes = append(section.Changes, buf.String())
+				section.Changes = append(section.Changes,
+					string(extractListItems(li, source, cl.References, "")))
 			}
 			return ast.WalkSkipChildren, nil
 

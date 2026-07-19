@@ -177,6 +177,50 @@ func extractMarkdown(node ast.Node, source []byte, refs map[string]Reference,
 	return buf.Bytes()
 }
 
+// extractListItems extracts list items, including sublists, from li.
+func extractListItems(li *ast.ListItem, source []byte, refs map[string]Reference,
+	indent string) []byte {
+	var buf bytes.Buffer
+	buf.WriteString(indent)
+	buf.WriteString("- ")
+
+	wroteFirstBlock := false
+	for c := li.FirstChild(); c != nil; c = c.NextSibling() {
+		if sublist, ok := c.(*ast.List); ok {
+			for sub := sublist.FirstChild(); sub != nil; sub = sub.NextSibling() {
+				subLI, ok := sub.(*ast.ListItem)
+				if !ok {
+					continue
+				}
+				buf.WriteString("\n")
+				buf.Write(extractListItems(subLI, source, refs, indent+"  "))
+			}
+			continue
+		}
+
+		text := extractMarkdown(c, source, refs, true)
+		lines := bytes.Split(text, []byte("\n"))
+
+		for i, line := range lines {
+			switch {
+			case i == 0 && !wroteFirstBlock:
+			case i == 0:
+				buf.WriteString("\n\n")
+				buf.WriteString(indent)
+				buf.WriteString("  ")
+			default:
+				buf.WriteRune('\n')
+				buf.WriteString(indent)
+				buf.WriteString("  ")
+			}
+			buf.Write(line)
+		}
+		wroteFirstBlock = true
+	}
+
+	return buf.Bytes()
+}
+
 // extractLintRules extracts markdownlint rules from an HTML block.
 func extractLintRules(node *ast.HTMLBlock, source []byte) []string {
 	raw := extractHTMLBlock(node, source)
