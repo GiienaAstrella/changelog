@@ -15,8 +15,8 @@ jobs:
       tag-name: ${{ steps.get_vars.outputs.TAG_NAME }}
       archive-name: ${{ steps.get_vars.outputs.ARCHIVE_NAME }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
         with:
           go-version-file: "go.mod"
       - name: Setup variables
@@ -30,6 +30,7 @@ jobs:
           echo "ARCHIVE_NAME=changelog-{0}_{1}-{2}.tar.gz" >> $GITHUB_ENV
           echo "ARCHIVE_NAME=changelog-{0}_{1}-{2}.tar.gz" >> $GITHUB_OUTPUT
       - name: Fetch release body
+        id: release
         uses: cardinalby/git-get-release-action@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -54,7 +55,7 @@ jobs:
             allowUpdates: true
             name: ${{ env.TAG_NAME }}
             draft: true
-            tag: ${{ env.VERSION_ID }}
+            tag: ${{ env.TAG_NAME }}
             bodyFile: RELEASE.md
 
   build-go:
@@ -79,8 +80,8 @@ jobs:
       TAG_NAME: ${{ needs.prepare-release.outputs.tag-name }}
       ARCHIVE_NAME: ${{ format(needs.prepare-release.outputs.archive-name, matrix.goos, matrix.goarch, needs.prepare-release.outputs.version-id) }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
         with:
           go-version-file: "go.mod"
       - name: Build binary
@@ -108,4 +109,4 @@ jobs:
             omitBodyDuringUpdate: true
             replacesArtifacts: false
             artifacts: './${{ env.ARCHIVE_NAME }}'
-            tag: ${{ env.VERSION_ID }}
+            tag: ${{ env.TAG_NAME }}
