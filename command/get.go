@@ -42,6 +42,40 @@ func init() {
 			},
 		},
 		Action: CommandGet,
+		ShellComplete: func(ctx context.Context, cmd *cli.Command) {
+			if shellCompleteFlag(ctx, cmd) {
+				return
+			}
+
+			targets := make(map[string]struct{})
+			for _, target := range cmd.Args().Slice() {
+				target = normalizeVersion(strings.ToLower(target))
+				targets[target] = struct{}{}
+			}
+
+			f, err := os.ReadFile(cmd.String("file"))
+			if err != nil {
+				return
+			}
+
+			var cl keepachangelog.Changelog
+			if cmd.Bool("old-parser") {
+				err = markdown.Unmarshal(f, &cl)
+			} else {
+				cl, err = keepachangelog.Parse(f)
+			}
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			for _, version := range cl.Versions {
+				if _, present := targets[strings.ToLower(version.ID)]; present {
+					continue
+				}
+				fmt.Println(version.ID)
+			}
+		},
 	}
 
 	Register(&cmd)

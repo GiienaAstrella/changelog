@@ -23,6 +23,7 @@ func main() {
 		Copyright:                     "(c) 2026 Giiena Astrella",
 		HideVersion:                   true,
 		CustomRootCommandHelpTemplate: helpTemplate,
+		EnableShellCompletion:         true,
 		Commands:                      command.Retrieve(),
 		Flags: []cli.Flag{
 			&cli.BoolFlag{

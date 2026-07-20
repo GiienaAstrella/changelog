@@ -11,6 +11,7 @@ This project attempts to adhere to [Semantic Versioning].
 
 ### Added
 
+- Shell completion ([#13]).
 - Global flag `--old-parser` (`-x`) to disable the new experimental parser and use the old text
   parser implementation.
 - `--single-line` (`-s`) flag for `get` command.
@@ -116,6 +117,7 @@ This project attempts to adhere to [Semantic Versioning].
   It can also be imported as a module, which will return the path to the changelog binary.
   Note: installation will silently fail of installed with `--ignore-scripts`.
 
+[#13]: https://github.com/GiienaAstrella/changelog/issues/13
 [#2]: https://github.com/GiienaAstrella/changelog/issues/2
 [#3]: https://github.com/GiienaAstrella/changelog/issues/3
 [#4]: https://github.com/GiienaAstrella/changelog/issues/4
