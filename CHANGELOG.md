@@ -7,6 +7,20 @@ All notable changes in Changelog will be documented in this file.
 The format is based on [Keep a Changelog].
 This project attempts to adhere to [Semantic Versioning].
 
+## [UNRELEASED]
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
 ## [0.4.0] - 2026-07-19
 
 ### Added
@@ -123,3 +137,4 @@ This project attempts to adhere to [Semantic Versioning].
 [0.4.0]: https://github.com/GiienaAstrella/changelog/releases/tag/0.4.0
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[UNRELEASED]: https://github.com/GiienaAstrella/changelog/compare/0.4.0...HEAD
