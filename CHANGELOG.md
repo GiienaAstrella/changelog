@@ -7,7 +7,7 @@ All notable changes in Changelog will be documented in this file.
 The format is based on [Keep a Changelog].
 This project attempts to adhere to [Semantic Versioning].
 
-## [UNRELEASED]
+## [0.4.0] - 2026-07-19
 
 ### Added
 
@@ -52,12 +52,6 @@ This project attempts to adhere to [Semantic Versioning].
 - Package `markdown`.
   For marshaling, the type should implement [`fmt.Stringer`](https://pkg.go.dev/fmt#Stringer).
   For parsing, refer to the target type's parsing function.
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [0.3.2] - 2025-08-07
 
@@ -126,6 +120,6 @@ This project attempts to adhere to [Semantic Versioning].
 [0.3.0]: https://github.com/GiienaAstrella/changelog/releases/tag/0.3.0
 [0.3.1]: https://github.com/GiienaAstrella/changelog/releases/tag/0.3.1
 [0.3.2]: https://github.com/GiienaAstrella/changelog/releases/tag/0.3.2
+[0.4.0]: https://github.com/GiienaAstrella/changelog/releases/tag/0.4.0
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
-[UNRELEASED]: https://github.com/GiienaAstrella/changelog/compare/0.3.2...HEAD
